@@ -7,6 +7,11 @@ import { filesFromPaths } from 'files-from-path'
 
 const assetBase = path.join(process.cwd(), 'assets')
 
+/**
+ * Scrapes a webpage and downloads all its assets (CSS, JS, images).
+ * @param {string} url - The URL of the webpage to scrape.
+ * @returns {Promise<string[]>} - A promise that resolves to an array of file paths.
+ */
 export async function scrapePage(url) {
   try {
     const { data } = await axios.get(url)
@@ -32,6 +37,12 @@ export async function scrapePage(url) {
   }
 }
 
+/**
+ * Downloads assets and saves them locally.
+ * @param {Array} assets - An array of asset objects to download.
+ * @param {Object} $ - The Cheerio instance.
+ * @returns {Promise<string[]>} - A promise that resolves to an array of asset file paths.
+ */
 export async function downloadAssets(assets, $) {
   const assetPaths = []
   for (const { element, assetUrl } of assets) {
@@ -55,10 +66,17 @@ export async function downloadAssets(assets, $) {
   return assetPaths
 }
 
+/**
+ * Ensures that a directory exists, creating it if necessary.
+ * @param {string} dir - The directory path.
+ */
 export async function ensureDirectoryExists(dir) {
   await fs.mkdir(dir, { recursive: true })
 }
 
+/**
+ * Clear the assetBase directory of old files.
+ */
 export async function clearAssets() {
   try {
     await fs.rmdir(assetBase, { recursive: true })
@@ -68,6 +86,13 @@ export async function clearAssets() {
   }
 }
 
+/**
+ * Uploads files to Web3 Storage.
+ * @param {string[]} files - An array of file paths to upload.
+ * @param {string} email - The email address for Web3 Storage account.
+ * @param {string} key - The key for the Web3 Storage space.
+ * @returns {Promise<string>} - A promise that resolves to the Web3 Storage URL.
+ */
 export async function uploadToWeb3Storage(files, email, key) {
   try {
     const client = await create()
@@ -82,6 +107,9 @@ export async function uploadToWeb3Storage(files, email, key) {
   }
 }
 
+/**
+ * If the script is run directly, scrape a page and upload it to Web3 Storage.
+ */
 if (import.meta.url === `file://${process.argv[1]}`) {
   (async () => {
     const email = process.argv[2]
