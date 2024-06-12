@@ -76,6 +76,18 @@ export async function ensureDirectoryExists(dir) {
 }
 
 /**
+ * Clear the assetBase directory of old files.
+ */
+export async function clearAssets() {
+  try {
+    await fs.rmdir(assetBase, { recursive: true });
+    await fs.mkdir(assetBase);
+  } catch (error) {
+    console.error('Error clearing assets:', error);
+  }
+}
+
+/**
  * Uploads files to Web3 Storage.
  * @param {string[]} files - An array of file paths to upload.
  * @param {string} email - The email address for Web3 Storage account.
@@ -93,18 +105,6 @@ export async function uploadToWeb3Storage(files, email, key) {
     return `https://${directoryCid}.ipfs.dweb.link`;
   } catch (error) {
     console.error('Error uploading to web3.storage:', error);
-  }
-}
-
-/**
- * Clear the assetBase directory of old files.
- */
-export async function clearAssets() {
-  try {
-    await fs.rmdir(assetBase, { recursive: true });
-    await fs.mkdir(assetBase);
-  } catch (error) {
-    console.error('Error clearing assets:', error);
   }
 }
 
